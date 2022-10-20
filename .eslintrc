@@ -1,0 +1,25 @@
+{
+    "extends": [
+        "plugin:vue/vue3-essential",
+        "eslint:recommended",
+        "@vue/eslint-config-typescript",
+        "@vue/eslint-config-prettier"
+    ],
+    "plugins": [
+        "prefer-arrow-functions"
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "rules": {
+        "no-empty": "error",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/explicit-function-return-type": "error",
+        "prefer-arrow-functions/prefer-arrow-functions": [
+            "warn",
+            {
+                "returnStyle": "implicit"
+            }
+        ]
+    }
+}
