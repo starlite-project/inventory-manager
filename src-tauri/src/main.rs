@@ -6,10 +6,11 @@
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 use app::{
+	http::LoadoutClient,
 	plugins::{
 		fern::colors, set_shadow, LogLevel, LoggerBuilder, RotationStrategy, WindowStateBuilder,
 	},
-	LoadoutClient, Result,
+	Result,
 };
 #[cfg(debug_assertions)]
 use tauri::Manager;

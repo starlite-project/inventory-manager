@@ -13,8 +13,9 @@ use tauri::Manager;
 use tokio::time::sleep;
 use url::Url;
 
-use super::token::AuthTokens;
-use crate::{LoadoutClient, Result};
+use super::{token::AuthTokens, LoadoutClient};
+use crate::Result;
+// use crate::{LoadoutClient, Result};
 
 const REDIRECT_SERVER: &str = env!("SERVER_LOCATION");
 

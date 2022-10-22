@@ -4,12 +4,11 @@ use serde::{de::DeserializeOwned, Serialize};
 
 use self::routing::{AppRoute, Destiny2Route, UserRoute};
 use crate::{
-	http::token::AuthTokens,
+	http::{token::AuthTokens, LoadoutClient},
 	model::{
 		util::BungieMembershipType, Application, BungieResponse, DestinyLinkedProfilesResponse,
 		GeneralUser,
 	},
-	LoadoutClient,
 };
 
 mod error;

@@ -13,21 +13,22 @@ import {
 	type RawDestinyLinkedProfilesResponse,
 } from './destiny2';
 import { GeneralUser, type RawGeneralUser } from './user';
+import type { Nullable } from '@/utils/types';
+import useSWRV from 'swrv';
+import type { IResponse } from 'swrv/dist/types';
 
-/* eslint-disable prefer-arrow-functions/prefer-arrow-functions */
-export function fetch(
-	key: 'get_bungie_applications'
-): Promise<Array<Application> | null>;
-export function fetch(key: 'get_current_user'): Promise<GeneralUser | null>;
-export function fetch(
-	key: 'get_linked_profiles'
-): Promise<DestinyLinkedProfilesResponse | null>;
-export async function fetch(key: string): Promise<unknown> {
+interface BaseTypes {
+	get_current_user: GeneralUser;
+	get_bungie_applications: Application[];
+	get_linked_profiles: DestinyLinkedProfilesResponse;
+}
+
+const internalFetch = async <K extends keyof BaseTypes>(
+	key: K
+): Promise<Nullable<BaseTypes[K]>> => {
 	const token = await getActiveToken();
 
-	if (!token) {
-		return null;
-	}
+	if (!token) return null;
 
 	let data: unknown = null;
 	try {
@@ -37,26 +38,29 @@ export async function fetch(key: string): Promise<unknown> {
 		throw e;
 	}
 
-	if (data === null) {
-		return null;
-	}
+	if (data === null) return null;
 
 	switch (key) {
-		case 'get_bungie_application':
+		case 'get_bungie_applications':
 			return (data as RawApplication[]).map(
 				(raw): Application => new Application(raw)
-			);
+			) as unknown as BaseTypes[K];
 		case 'get_current_user':
-			return new GeneralUser(data as RawGeneralUser);
+			return new GeneralUser(
+				data as RawGeneralUser
+			) as unknown as BaseTypes[K];
 		case 'get_linked_profiles':
 			return new DestinyLinkedProfilesResponse(
 				data as RawDestinyLinkedProfilesResponse
-			);
+			) as unknown as BaseTypes[K];
 		default:
 			throw new Error(`Unexpected key ${key}`);
 	}
-}
-/* eslint-enable prefer-arrow-functions/prefer-arrow-functions */
+};
+
+export const useModel = <K extends keyof BaseTypes>(
+	key: K
+): IResponse<BaseTypes[K]> => useSWRV<BaseTypes[K]>(key, internalFetch);
 
 const getActiveToken = async (): Promise<AuthTokens> => {
 	const token = getToken();

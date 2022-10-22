@@ -4,11 +4,12 @@ import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
 
-import './assets/main.css';
+import './assets/main.scss';
 import { attachConsole } from './plugins';
+import { initi18n } from './utils/i18n';
 
 const main = async (): Promise<void> => {
-	await attachConsole();
+	await Promise.all([attachConsole(), initi18n()]);
 
 	const app = createApp(App);
 

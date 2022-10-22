@@ -11,11 +11,6 @@ pub mod util;
 
 use serde::{Serialize, Serializer};
 
-pub use self::http::{
-	oauth::{D2ExtraFields, D2OAuthClient},
-	LoadoutClient,
-};
-
 #[derive(Debug)]
 #[repr(transparent)]
 pub struct Error(anyhow::Error);
