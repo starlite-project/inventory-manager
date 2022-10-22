@@ -16,6 +16,7 @@ mod routing;
 
 pub use self::{error::FetchError, routing::IntoRequest};
 
+#[tauri::command]
 pub async fn get_linked_profiles(
 	http: tauri::State<'_, LoadoutClient>,
 	token: AuthTokens,
@@ -66,7 +67,7 @@ async fn basic_fetch<T: Serialize + DeserializeOwned>(
 		});
 	}
 
-	if res.throttle_seconds > 0 {
+	if res.throttle_seconds > 0.0 {
 		tokio::time::sleep(Duration::from_secs(res.throttle_seconds as u64)).await;
 	}
 

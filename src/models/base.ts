@@ -1,4 +1,4 @@
-export class Base<T> {
+export abstract class Base<T> {
 	public constructor(protected _data: T) {}
 }
 

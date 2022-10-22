@@ -12,7 +12,7 @@ pub use self::{application::*, destiny::*, user::*};
 pub struct BungieResponse<T> {
 	pub response: T,
 	pub error_code: i32,
-	pub throttle_seconds: i32,
+	pub throttle_seconds: f32,
 	pub error_status: String,
 	pub message: String,
 	pub message_data: std::collections::HashMap<String, String>,

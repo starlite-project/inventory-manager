@@ -4,8 +4,10 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { t } from '../utils/i18n';
 import { error } from '../plugins';
 import { useRouter } from 'vue-router';
+import { useAccountStore } from '../stores/account';
 
 const router = useRouter();
+const account = useAccountStore();
 
 const onLoginClick = async (): Promise<void> => {
 	try {
@@ -13,6 +15,7 @@ const onLoginClick = async (): Promise<void> => {
 			'get_authorization_code'
 		)) as AuthTokens;
 		setToken(authTokens);
+		account.login();
 	} catch (e) {
 		await error(e as string);
 	} finally {
@@ -22,13 +25,13 @@ const onLoginClick = async (): Promise<void> => {
 </script>
 
 <template>
-	<a rel="noopener noreferrer" @click.prevent="onLoginClick">{{
+	<a class="auth" rel="noopener noreferrer" @click.prevent="onLoginClick">{{
 		t('Views.Login.Auth')
 	}}</a>
 </template>
 
 <style scoped lang="scss">
-.a {
+.auth {
 	font-size: 1rem;
 	font-weight: bold;
 	text-align: center;

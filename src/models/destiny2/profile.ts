@@ -6,7 +6,7 @@ import { type RawUserInfoCard, UserInfoCard } from '../user/info';
 export interface RawDestinyProfileUserInfoCard {
 	isOverridden: boolean;
 	isCrossSavePrimary: boolean;
-	supplementalDisplayName: string;
+	supplementalDisplayName?: string;
 	iconPath: string;
 	crossSaveOverride: number;
 	applicableMembershipTypes: BungieMembershipType[];

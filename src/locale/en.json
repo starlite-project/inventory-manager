@@ -3,5 +3,8 @@
 		"Login": {
 			"Auth": "Authorize with Bungie.net"
 		}
+	},
+	"Internal": {
+		"Error": "An unknown error has occurred"
 	}
 }

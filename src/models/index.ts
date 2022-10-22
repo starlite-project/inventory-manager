@@ -16,6 +16,7 @@ import { GeneralUser, type RawGeneralUser } from './user';
 import type { Nullable } from '@/utils/types';
 import useSWRV from 'swrv';
 import type { IResponse } from 'swrv/dist/types';
+import LocalStorageCache from 'swrv/dist/cache/adapters/localStorage';
 
 interface BaseTypes {
 	get_current_user: GeneralUser;
@@ -60,7 +61,11 @@ const internalFetch = async <K extends keyof BaseTypes>(
 
 export const useModel = <K extends keyof BaseTypes>(
 	key: K
-): IResponse<BaseTypes[K]> => useSWRV<BaseTypes[K]>(key, internalFetch);
+): IResponse<BaseTypes[K]> =>
+	useSWRV<BaseTypes[K]>(key, internalFetch, {
+		shouldRetryOnError: false,
+		cache: new LocalStorageCache(`im-${key}`),
+	});
 
 const getActiveToken = async (): Promise<AuthTokens> => {
 	const token = getToken();
