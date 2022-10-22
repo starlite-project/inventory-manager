@@ -26,5 +26,6 @@ pub struct DestinyProfileUserInfoCard {
 #[serde(rename_all = "camelCase")]
 pub struct DestinyLinkedProfilesResponse {
 	pub profiles: Vec<DestinyProfileUserInfoCard>,
+	// TODO: fix the deser errors
 	// pub bnet_membership: UserInfoCard,
 }
