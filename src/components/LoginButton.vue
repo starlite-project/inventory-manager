@@ -19,7 +19,7 @@ const onLoginClick = async (): Promise<void> => {
 	} catch (e) {
 		await error(e as string);
 	} finally {
-		router.push('/');
+		router.go(-1);
 	}
 };
 </script>

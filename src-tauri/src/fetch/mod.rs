@@ -1,17 +1,15 @@
 use std::time::Duration;
 
-use serde::{de::DeserializeOwned, Serialize};
+use serde_json::Value as JsonValue;
 
-use self::routing::{AppRoute, Destiny2Route, UserRoute};
-use crate::{
-	http::{token::AuthTokens, LoadoutClient},
-	model::{
-		util::BungieMembershipType, Application, BungieResponse, DestinyLinkedProfilesResponse,
-		GeneralUser,
-	},
+use self::{
+	response::BungieResponse,
+	routing::{AppRoute, Destiny2Route, UserRoute},
 };
+use crate::{http::{token::AuthTokens, LoadoutClient}, model::BungieMembershipType};
 
 mod error;
+mod response;
 mod routing;
 
 pub use self::{error::FetchError, routing::IntoRequest};
@@ -20,7 +18,7 @@ pub use self::{error::FetchError, routing::IntoRequest};
 pub async fn get_linked_profiles(
 	http: tauri::State<'_, LoadoutClient>,
 	token: AuthTokens,
-) -> Result<DestinyLinkedProfilesResponse, FetchError> {
+) -> Result<JsonValue, FetchError> {
 	let route = Destiny2Route::GetLinkedProfiles(
 		token.bungie_membership_id,
 		BungieMembershipType::BungieNext,
@@ -33,7 +31,7 @@ pub async fn get_linked_profiles(
 pub async fn get_bungie_applications(
 	http: tauri::State<'_, LoadoutClient>,
 	token: AuthTokens,
-) -> Result<Vec<Application>, FetchError> {
+) -> Result<JsonValue, FetchError> {
 	basic_fetch(&*http, token, AppRoute::FirstParty).await
 }
 
@@ -41,22 +39,22 @@ pub async fn get_bungie_applications(
 pub async fn get_current_user(
 	http: tauri::State<'_, LoadoutClient>,
 	token: AuthTokens,
-) -> Result<GeneralUser, FetchError> {
+) -> Result<JsonValue, FetchError> {
 	let route = UserRoute::GetBungieNetUserById(token.bungie_membership_id);
 	basic_fetch(&*http, token, route).await
 }
 
 #[allow(dead_code)]
-async fn basic_fetch<T: Serialize + DeserializeOwned>(
+async fn basic_fetch(
 	client: &LoadoutClient,
 	token: AuthTokens,
 	route: impl IntoRequest,
-) -> Result<T, FetchError> {
+) -> Result<JsonValue, FetchError> {
 	let request = client.from_route(route, token.access_token.value().to_owned())?;
 
 	let raw = request.send().await?.bytes().await?;
 
-	let res = serde_json::from_slice::<BungieResponse<T>>(&raw)
+	let res = serde_json::from_slice::<BungieResponse>(&raw)
 		.expect("failed to deserialize bungie data, this is bad!");
 
 	if res.error_code != 1 {

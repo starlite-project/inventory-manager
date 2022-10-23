@@ -14,5 +14,5 @@ onMounted((): void => {
 </script>
 
 <template>
-	<div />
+	<div v-if="false"></div>
 </template>

@@ -2,9 +2,7 @@
 
 use std::fmt::{Display, Formatter, Result as FmtResult, Write};
 
-use crate::{
-	model::util::{BungieMembershipType, DestinyComponentType},
-};
+use crate::model::{BungieMembershipType, DestinyComponentType};
 
 #[derive(Debug, Clone)]
 pub enum AppRoute {
