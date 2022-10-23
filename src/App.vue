@@ -1,23 +1,16 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import { useAccountStore } from './stores/account';
+import NavigateTo from './components/NavigateTo.vue';
 
 const account = useAccountStore();
 
-const router = useRouter();
-
-onMounted((): void => {
-	if (account.needsLogin) {
-		router.push('/login');
-	} else {
-		router.push('/');
-	}
-});
+const needsLogin = account.needsLogin;
 </script>
 
 <template>
 	<RouterView />
+	<NavigateTo v-if="needsLogin" to="/login" />
+	<NavigateTo v-else to="/" />
 </template>
 
 <style lang="scss">

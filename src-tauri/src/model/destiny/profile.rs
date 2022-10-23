@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use url::Url;
 
 use crate::{
 	model::{user::UserInfoCard, util::BungieMembershipType, IconUrl},
@@ -10,8 +11,8 @@ use crate::{
 pub struct DestinyProfileUserInfoCard {
 	pub is_overridden: bool,
 	pub is_cross_save_primary: bool,
-	pub supplemental_display_name: Option<String>,
-	pub icon_path: Option<String>,
+	pub supplemental_display_name: String,
+	pub icon_path: String,
 	pub cross_save_override: i32,
 	pub applicable_membership_types: Vec<BungieMembershipType>,
 	pub is_public: bool,
@@ -20,6 +21,15 @@ pub struct DestinyProfileUserInfoCard {
 	pub membership_id: i64,
 	pub display_name: String,
 	pub bungie_global_display_name: String,
+}
+
+impl IconUrl for DestinyProfileUserInfoCard {
+	fn icon_url(&self) -> Result<url::Url, url::ParseError> {
+		let mut base = API_BASE.parse::<Url>()?;
+		base.set_path(&self.icon_path);
+
+		Ok(base)
+	}
 }
 
 #[derive(Debug, Serialize, Deserialize)]
