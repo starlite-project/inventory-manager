@@ -2,7 +2,7 @@ import { hasValidAuthTokens } from '../utils/token';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-export const useAccountStore = defineStore('account', () => {
+export default defineStore('account', () => {
 	const needsLogin = ref(!hasValidAuthTokens());
 	const loaded = ref(false);
 

@@ -4,7 +4,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { t } from '../utils/i18n';
 import { error } from '../plugins';
 import { useRouter } from 'vue-router';
-import { useAccountStore } from '../stores/account';
+import { useAccountStore } from '../stores';
 
 const router = useRouter();
 const account = useAccountStore();

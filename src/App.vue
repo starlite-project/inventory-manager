@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAccountStore } from './stores/account';
+import { useAccountStore } from './stores';
 import NavigateTo from './components/NavigateTo.vue';
 
 const account = useAccountStore();
