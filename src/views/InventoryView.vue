@@ -9,6 +9,6 @@ const { data, error } = useModel('get_linked_profiles');
 	<div>
 		<ErrorDisplay v-if="error" :error="error" />
 		<div v-else-if="!data">Loading data...</div>
-		<div v-else>Raw data: {{ JSON.stringify(data) }}</div>
+		<div v-else>Raw data: {{ JSON.stringify(data.profiles) }}</div>
 	</div>
 </template>

@@ -10,7 +10,7 @@ const needsLogin = account.needsLogin;
 <template>
 	<RouterView />
 	<NavigateTo v-if="needsLogin" to="/login" />
-	<NavigateTo v-else to="/" />
+	<NavigateTo v-else to="/inventory" />
 </template>
 
 <style lang="scss">
