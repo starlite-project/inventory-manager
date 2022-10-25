@@ -1,10 +1,10 @@
 {
-	"Views": {
-		"Login": {
-			"Auth": "Authorize with Bungie.net"
+	"views": {
+		"login": {
+			"auth": "Authorize with Bungie.net"
 		}
 	},
-	"Internal": {
-		"Error": "An unknown error has occurred"
+	"internal": {
+		"error": "An unknown error has occurred"
 	}
 }

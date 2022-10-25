@@ -15,6 +15,7 @@ dist-ssr
 coverage
 *.local
 target
+stats.html
 
 /cypress/videos/
 /cypress/screenshots/

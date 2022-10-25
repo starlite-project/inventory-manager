@@ -1,17 +1,14 @@
-import i18next, { type TFunctionDetailedResult } from 'i18next';
-import en from '../locale/en.json';
-import resourcesToBackend from 'i18next-resources-to-backend';
+import { nextTick } from 'vue';
+import {
+	createI18n,
+	type I18n,
+	type I18nOptions,
+	type Locale,
+	type VueI18n,
+	type Composer,
+} from 'vue-i18n';
 
-interface LangInfo {
-	pluralOverride: boolean;
-	latinBased: boolean;
-}
-
-export const INVENTORY_MANAGER_LANG_INFOS: Record<string, LangInfo> = {
-	en: { pluralOverride: false, latinBased: true },
-};
-
-const INVENTORY_MANAGER_LANGS = Object.keys(INVENTORY_MANAGER_LANG_INFOS);
+export const INVENTORY_MANAGER_LANGS = ['en'];
 
 export const defaultLanguage = (): string => {
 	const storedLanguage = localStorage.getItem('inventoryManagerLanguage');
@@ -27,79 +24,41 @@ export const defaultLanguage = (): string => {
 	);
 };
 
-export const initi18n = (): Promise<unknown> => {
-	const lang = defaultLanguage();
-	return new Promise((resolve, reject): void => {
-		i18next
-			.use(
-				resourcesToBackend((language, _namespace, callback) => {
-					import(`../locale/${language}.json`)
-						.then((resources) => callback(null, resources))
-						.catch((error) => callback(error, null));
-				})
-			)
-			.init(
-				{
-					initImmediate: true,
-					compatibilityJSON: 'v3',
-					debug: __INVENTORY_MANAGER_FLAVOR__ === 'dev',
-					lng: lang,
-					fallbackLng: 'en',
-					supportedLngs: INVENTORY_MANAGER_LANGS,
-					load: 'currentOnly',
-					interpolation: {
-						escapeValue: false,
-						format: (val: string, format) => {
-							switch (format) {
-								case 'pct':
-									return `${Math.min(
-										100,
-										Math.floor(100 * parseFloat(val))
-									)}%`;
-								case 'humanBytes':
-									return humanBytes(parseInt(val, 10));
-								case 'number':
-									return parseInt(val, 10).toLocaleString();
-								default:
-									return val;
-							}
-						},
-					},
-					backend: {
-						loadPath: ([lng]: string[]) => {
-							const path = {
-								en,
-							}[lng] as unknown as string;
-							if (!path) {
-								throw new Error(`unsupported language ${lng}`);
-							}
+export const getLocale = (i18n: I18n): string =>
+	i18n.mode === 'legacy'
+		? (i18n.global as unknown as VueI18n).locale
+		: (i18n as unknown as Composer).locale.value;
 
-							return path;
-						},
-					},
-					returnObjects: true,
-				},
-				(error) => {
-					if (error) {
-						console.error(error);
-						reject(error);
-					} else {
-						resolve(null);
-					}
-				}
-			);
-	});
+export const setLocale = (i18n: I18n, locale: Locale): void => {
+	if (i18n.mode === 'legacy') {
+		(i18n.global as unknown as VueI18n).locale = locale;
+	} else {
+		(i18n.global as unknown as Composer).locale.value = locale;
+	}
 };
 
-export const t = (key: string | string[]): TFunctionDetailedResult<object> =>
-	i18next.t(key);
+export const setupI18n = (options: I18nOptions = { locale: 'en' }): I18n => {
+	const i18n = createI18n(options);
+	setI18nLanguage(i18n, options.locale!);
+	return i18n;
+};
 
-const humanBytes = (size: number): string => {
-	if (size <= 0) {
-		return '0B';
-	}
-	const i = Math.floor(Math.log(size) / Math.log(1024));
-	return `${(size / Math.pow(1024, i)).toFixed(2)} ${
-		['B', 'KB', 'MB', 'GB', 'TB'][i]
-	}`;
+export const setI18nLanguage = (i18n: I18n, locale: Locale): void => {
+	setLocale(i18n, locale);
+	document.querySelector('html')!.setAttribute('lang', locale);
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-function-return-type
+const getResourceMessages = (r: any) => r.default || r;
+
+export const loadLocaleMessages = async (
+	i18n: I18n,
+	locale: Locale
+): Promise<void> => {
+	const messages = await import(
+		/* @vite-ignore */ `../locale/${locale}.json`
+	).then(getResourceMessages);
+
+	i18n.global.setLocaleMessage(locale, messages);
+	return nextTick();
 };

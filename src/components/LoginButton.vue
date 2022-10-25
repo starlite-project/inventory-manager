@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { setToken, type AuthTokens } from '../utils/token';
 import { invoke } from '@tauri-apps/api/tauri';
-import { t } from '../utils/i18n';
+import { useI18n } from 'vue-i18n';
 import { error } from '../plugins';
 import { useRouter } from 'vue-router';
 import { useAccountStore } from '../stores';
 
 const router = useRouter();
 const account = useAccountStore();
+const { t } = useI18n();
 
 const onLoginClick = async (): Promise<void> => {
 	try {
@@ -26,7 +27,7 @@ const onLoginClick = async (): Promise<void> => {
 
 <template>
 	<a class="auth" rel="noopener noreferrer" @click.prevent="onLoginClick">{{
-		t('Views.Login.Auth')
+	t('Views.Login.Auth')
 	}}</a>
 </template>
 
