@@ -18,7 +18,7 @@ const onLoginClick = async (): Promise<void> => {
 	} catch (e) {
 		await error(e as string);
 	} finally {
-		router.go(-1);
+		router.push('/inventory');
 	}
 };
 </script>
