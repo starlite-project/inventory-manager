@@ -4,19 +4,17 @@ import {
 	removeToken,
 	hasTokenExpired,
 	setToken,
-} from '@/utils/token';
+} from './utils/token';
 import { invoke } from '@tauri-apps/api';
-import { error } from '@/plugins';
-import { Application, type RawApplication } from './application';
-import {
-	DestinyLinkedProfilesResponse,
-	type RawDestinyLinkedProfilesResponse,
-} from './destiny2';
-import { GeneralUser, type RawGeneralUser } from './user';
-import type { Nullable } from '@/utils/types';
+import { error } from './plugins';
+import type { Nullable } from './utils/types';
 import useSWRV from 'swrv';
 import type { IResponse } from 'swrv/dist/types';
 import LocalStorageCache from 'swrv/dist/cache/adapters/localStorage';
+import type { InvokeArgs } from '@tauri-apps/api/tauri';
+import type { DestinyLinkedProfilesResponse } from 'bungie-api-ts/destiny2';
+import type { GeneralUser } from 'bungie-api-ts/user';
+import type { Application } from 'bungie-api-ts/app';
 
 interface BaseTypes {
 	get_current_user: GeneralUser;
@@ -24,45 +22,35 @@ interface BaseTypes {
 	get_linked_profiles: DestinyLinkedProfilesResponse;
 }
 
-const internalFetch = async <K extends keyof BaseTypes>(
-	key: K
-): Promise<Nullable<BaseTypes[K]>> => {
-	const token = await getActiveToken();
+interface InternalFetch {
+	<K extends keyof BaseTypes>(key: K): Promise<Nullable<BaseTypes[K]>>;
+}
 
-	if (!token) return null;
+const createInternalFetch =
+	(args?: InvokeArgs): InternalFetch =>
+	async <K extends keyof BaseTypes>(
+		key: K
+	): Promise<Nullable<BaseTypes[K]>> => {
+		const token = await getActiveToken();
 
-	let data: unknown = null;
-	try {
-		data = await invoke(key, { token });
-	} catch (e) {
-		await error(e as string);
-		throw e;
-	}
+		if (!token) return null;
 
-	if (data === null) return null;
+		let data: Nullable<BaseTypes[K]> = null;
+		try {
+			data = await invoke(key, { token, ...args });
+		} catch (e) {
+			await error(e as string);
+			throw e;
+		}
 
-	switch (key) {
-		case 'get_bungie_applications':
-			return (data as RawApplication[]).map(
-				(raw): Application => new Application(raw)
-			) as unknown as BaseTypes[K];
-		case 'get_current_user':
-			return new GeneralUser(
-				data as RawGeneralUser
-			) as unknown as BaseTypes[K];
-		case 'get_linked_profiles':
-			return new DestinyLinkedProfilesResponse(
-				data as RawDestinyLinkedProfilesResponse
-			) as unknown as BaseTypes[K];
-		default:
-			throw new Error(`Unexpected key ${key}`);
-	}
-};
+		return data;
+	};
 
 export const useModel = <K extends keyof BaseTypes>(
-	key: K
+	key: K,
+	args?: InvokeArgs
 ): IResponse<BaseTypes[K]> =>
-	useSWRV<BaseTypes[K]>(key, internalFetch, {
+	useSWRV<BaseTypes[K]>(key, createInternalFetch(args), {
 		shouldRetryOnError: false,
 		cache: new LocalStorageCache(`im-${key}`),
 	});

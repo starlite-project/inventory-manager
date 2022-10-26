@@ -4,8 +4,6 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { visualizer } from 'rollup-plugin-visualizer';
-import vueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
-import { dirname, resolve } from 'node:path';
 
 const debug = !!(process.env.TAURI_DEBUG ?? true);
 
@@ -22,19 +20,7 @@ export default defineConfig({
 	server: {
 		strictPort: true,
 	},
-	plugins: [
-		vue(),
-		vueJsx(),
-		visualizer(),
-		vueI18nPlugin({
-			include: resolve(
-				dirname(fileURLToPath(import.meta.url)),
-				'src',
-				'locale',
-				'**'
-			),
-		}),
-	],
+	plugins: [vue(), vueJsx(), visualizer()],
 	resolve: {
 		alias: {
 			'@': fileURLToPath(new URL('./src', import.meta.url)),
