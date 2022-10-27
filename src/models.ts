@@ -52,8 +52,17 @@ export const useModel = <K extends keyof BaseTypes>(
 ): IResponse<BaseTypes[K]> =>
 	useSWRV<BaseTypes[K]>(key, createInternalFetch(args), {
 		shouldRetryOnError: false,
-		cache: new LocalStorageCache(`im-${key}`),
+		cache: new LocalStorageCache(`im_${key}`),
 	});
+
+export const internalFetch = async <K extends keyof BaseTypes>(
+	key: K,
+	args?: InvokeArgs
+): Promise<Nullable<BaseTypes[K]>> => {
+	const fetch = createInternalFetch(args);
+
+	return fetch(key);
+};
 
 const getActiveToken = async (): Promise<AuthTokens> => {
 	const token = getToken();
