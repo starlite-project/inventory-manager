@@ -1,18 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { useAccountStore } from '@/stores';
 import ErrorDisplay from '../components/ErrorDisplay.vue';
-import { useAccountStore } from '../stores';
 
-const accounts = useAccountStore();
-
-const loading = ref(true);
-
-accounts.loadAccounts().then(() => (loading.value = false));
+const { data, error } = useAccountStore();
 </script>
 
 <template>
 	<div>
-		<div v-if="loading">Loading data...</div>
-		<div v-else>Raw data: {{ JSON.stringify(accounts.accounts) }}</div>
+		<ErrorDisplay v-if="error" :error="error" />
+		<div v-else-if="!data.length">Loading...</div>
+		<div v-else>{{ JSON.stringify(data) }}</div>
 	</div>
 </template>

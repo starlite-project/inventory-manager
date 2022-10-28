@@ -20,7 +20,13 @@ export default defineConfig({
 	server: {
 		strictPort: true,
 	},
-	plugins: [vue(), vueJsx(), visualizer()],
+	plugins: [
+		vue(),
+		vueJsx(),
+		visualizer({
+			sourcemap: true,
+		}),
+	],
 	resolve: {
 		alias: {
 			'@': fileURLToPath(new URL('./src', import.meta.url)),

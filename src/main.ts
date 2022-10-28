@@ -4,7 +4,7 @@ import App from './App.vue';
 import router from './router';
 import { attachConsole } from './plugins';
 import { initi18n } from './setup/i18n';
-import { useAccountStore } from './stores';
+import { useLoginStore } from './stores';
 
 const main = async (): Promise<void> => {
 	await Promise.all([attachConsole()]);
@@ -13,8 +13,8 @@ const main = async (): Promise<void> => {
 
 	(await initi18n(app)).use(createPinia());
 	router.beforeEach((to) => {
-		const accounts = useAccountStore();
-		if (to.meta.requiresAuth && accounts.needsLogin) {
+		const loginStore = useLoginStore();
+		if (to.meta.requiresAuth && !loginStore.isLoggedIn) {
 			return {
 				path: '/login',
 			};

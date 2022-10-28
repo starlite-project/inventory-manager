@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^1.1.0",
+    "@vueuse/core": "^9.4.0",
     "bungie-api-ts": "^4.19.0",
     "i18next": "^22.0.2",
     "i18next-browser-languagedetector": "^7.0.0",

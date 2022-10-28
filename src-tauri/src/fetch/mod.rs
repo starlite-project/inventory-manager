@@ -22,7 +22,7 @@ pub async fn get_linked_profiles(
 	let route = Destiny2Route::GetLinkedProfiles(
 		token.bungie_membership_id,
 		BungieMembershipType::BungieNext,
-		None,
+		Some(false),
 	);
 	basic_fetch(&*http, token, route).await
 }
