@@ -50,6 +50,7 @@ fn main() -> Result<()> {
 		.build();
 
 	tauri::Builder::default()
+		.system_tray(app::tray::setup_tray())
 		.manage(LoadoutClient::new()?)
 		.plugin(log)
 		.plugin(WindowStateBuilder::default().build())
@@ -69,6 +70,7 @@ fn main() -> Result<()> {
 
 			Ok(())
 		})
+		.on_system_tray_event(app::tray::handle_system_tray_event)
 		.run(tauri::generate_context!())?;
 	Ok(())
 }

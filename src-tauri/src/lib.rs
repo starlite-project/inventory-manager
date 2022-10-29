@@ -6,6 +6,7 @@ use std::{
 pub mod fetch;
 pub mod http;
 pub mod model;
+pub mod tray;
 pub mod plugins;
 pub mod util;
 
