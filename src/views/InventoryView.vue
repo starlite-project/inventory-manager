@@ -1,14 +1,24 @@
 <script setup lang="ts">
-import { useAccountStore, useCharacterStore } from '@/stores';
+import { useAccountStore } from '@/stores';
+import { useAsyncState } from '@vueuse/core';
 import ErrorDisplay from '../components/ErrorDisplay.vue';
 
-const { data, error } = useCharacterStore();
+const account = useAccountStore();
+
+const {
+	state: data,
+	error,
+	isLoading,
+} = useAsyncState(
+	account.getAccounts().then(() => account.accounts),
+	[]
+);
 </script>
 
 <template>
 	<div>
 		<ErrorDisplay v-if="error" :error="error" />
-		<div v-else-if="!data.length">Loading...</div>
+		<div v-else-if="isLoading">Loading...</div>
 		<div v-else>{{ JSON.stringify(data) }}</div>
 	</div>
 </template>

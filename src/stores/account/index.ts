@@ -1,22 +1,49 @@
 import { defineStore } from 'pinia';
 import { type DestinyAccount, generateDestinyAccounts } from './transformers';
-import { useModel } from '../../models';
-import { reactive, ref, watch } from 'vue';
-import { useLoginStore } from '..';
+import { computed, ref } from 'vue';
+import { hasValidAuthTokens } from '@/utils/token';
+import { useStorage } from '@vueuse/core';
+import { fetch } from '@/models';
+import { error } from '@/plugins';
 
 export default defineStore('account', () => {
-	const loginStore = useLoginStore();
+	const isLoggedIn = ref(hasValidAuthTokens());
+	const accounts = useStorage<DestinyAccount[]>(
+		'account-destiny-accounts',
+		[]
+	);
+	const loaded = computed((): boolean => accounts.value.length > 0);
 
-	if (!loginStore.isLoggedIn)
-		return { error: ref('Not logged in'), data: reactive([]) };
+	const login = (): void => {
+		isLoggedIn.value = true;
+	};
 
-	const { data: rawData, error } = useModel({ key: 'get_linked_profiles' });
-	const accounts: DestinyAccount[] = reactive([]);
+	const logout = (): void => {
+		isLoggedIn.value = false;
+		accounts.value.length = 0;
+	};
 
-	watch(rawData, (newData): void => {
-		accounts.length = 0;
-		accounts.push(...generateDestinyAccounts(newData!));
-	});
+	const getAccounts = async (
+		force: boolean = !loaded.value
+	): Promise<void> => {
+		if (!force && loaded) return;
 
-	return { data: accounts, error };
+		const data = await fetch('get_linked_profiles');
+
+		if (!data) {
+			await error('Failed to fetch profile');
+			throw new Error('Failed to fetch profile');
+		}
+
+		accounts.value = generateDestinyAccounts(data);
+	};
+
+	return {
+		isLoggedIn,
+		accounts,
+		loaded,
+		login,
+		logout,
+		getAccounts,
+	};
 });

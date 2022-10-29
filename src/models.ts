@@ -8,9 +8,6 @@ import {
 import { invoke } from '@tauri-apps/api';
 import { error } from './plugins';
 import type { Nullable } from './utils/types';
-import useSWRV from 'swrv';
-import type { IResponse } from 'swrv/dist/types';
-import LocalStorageCache from 'swrv/dist/cache/adapters/localStorage';
 import type { InvokeArgs } from '@tauri-apps/api/tauri';
 import type {
 	DestinyLinkedProfilesResponse,
@@ -26,58 +23,28 @@ interface BaseTypes {
 	get_profile: DestinyProfileResponse;
 }
 
-interface InternalFetch {
-	<K extends keyof BaseTypes>(key: K): Promise<Nullable<BaseTypes[K]>>;
+interface ModelFetch {
+	<K extends keyof BaseTypes>(
+		key: K,
+		args?: Omit<InvokeArgs, 'token'>
+	): Promise<Nullable<BaseTypes[K]>>;
 }
 
-const createInternalFetch =
-	(args?: InvokeArgs): InternalFetch =>
-	async <K extends keyof BaseTypes>(
-		key: K
-	): Promise<Nullable<BaseTypes[K]>> => {
-		const token = await getActiveToken();
-
-		if (!token) return null;
-
-		let data: Nullable<BaseTypes[K]> = null;
-		try {
-			data = await invoke(key, { token, ...args });
-		} catch (e) {
-			await error(e as string);
-			throw e;
-		}
-
-		return data;
-	};
-
-export interface UseModelOptions<K extends keyof BaseTypes> {
-	key: K;
-	useFetch?: boolean;
-}
-
-export const useModel = <K extends keyof BaseTypes>(
-	{ key, useFetch = false }: UseModelOptions<K>,
-	args?: InvokeArgs
-): IResponse<BaseTypes[K]> => {
-	if (!useFetch)
-		return useSWRV(key, null, {
-			shouldRetryOnError: false,
-			cache: new LocalStorageCache(`im_${key}`),
-		});
-	else
-		return useSWRV(key, createInternalFetch(args), {
-			shouldRetryOnError: false,
-			cache: new LocalStorageCache(`im_${key}`),
-		});
-};
-
-export const internalFetch = async <K extends keyof BaseTypes>(
+export const fetch: ModelFetch = async <K extends keyof BaseTypes>(
 	key: K,
-	args?: InvokeArgs
+	args?: Omit<InvokeArgs, 'token'>
 ): Promise<Nullable<BaseTypes[K]>> => {
-	const fetch = createInternalFetch(args);
+	const token = await getActiveToken();
 
-	return fetch(key);
+	if (!token) return null;
+
+	try {
+		const data = await invoke<BaseTypes[K]>(key, { token, ...args });
+		return data;
+	} catch (e) {
+		await error(e as string);
+		throw e;
+	}
 };
 
 const getActiveToken = async (): Promise<AuthTokens> => {

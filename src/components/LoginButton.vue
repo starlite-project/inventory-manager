@@ -3,10 +3,10 @@ import { setToken, type AuthTokens } from '../utils/token';
 import { invoke } from '@tauri-apps/api/tauri';
 import { error } from '../plugins';
 import { useRouter } from 'vue-router';
-import { useLoginStore } from '../stores';
+import { useAccountStore } from '../stores';
 
 const router = useRouter();
-const loginStore = useLoginStore();
+const accounts = useAccountStore();
 
 const onLoginClick = async (): Promise<void> => {
 	try {
@@ -14,7 +14,7 @@ const onLoginClick = async (): Promise<void> => {
 			'get_authorization_code'
 		)) as AuthTokens;
 		setToken(authTokens);
-		loginStore.login();
+		accounts.login();
 	} catch (e) {
 		await error(e as string);
 	} finally {
