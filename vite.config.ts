@@ -5,7 +5,8 @@ import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { visualizer } from 'rollup-plugin-visualizer';
 
-const debug = !!(process.env.TAURI_DEBUG ?? true);
+// const debug = !!(process.env.TAURI_DEBUG ?? false);
+const debug = true;
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -24,7 +25,7 @@ export default defineConfig({
 		vue(),
 		vueJsx(),
 		visualizer({
-			sourcemap: true,
+			sourcemap: debug,
 		}),
 	],
 	resolve: {

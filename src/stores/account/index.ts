@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { type DestinyAccount, generateDestinyAccounts } from './transformers';
+import { type DestinyAccount, generateDestinyAccounts } from './types';
 import { computed, ref } from 'vue';
 import { hasValidAuthTokens } from '@/utils/token';
 import { useStorage } from '@vueuse/core';

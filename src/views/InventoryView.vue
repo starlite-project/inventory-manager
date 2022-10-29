@@ -16,9 +16,7 @@ const {
 </script>
 
 <template>
-	<div>
-		<ErrorDisplay v-if="error" :error="error" />
-		<div v-else-if="isLoading">Loading...</div>
-		<div v-else>{{ JSON.stringify(data) }}</div>
-	</div>
+	<ErrorDisplay v-if="error" :error="error" />
+	<div v-else-if="isLoading">Loading...</div>
+	<div v-else>{{ JSON.stringify(data) }}</div>
 </template>
