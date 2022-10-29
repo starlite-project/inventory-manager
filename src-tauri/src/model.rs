@@ -2,6 +2,45 @@ use std::fmt::{Display, Formatter, Result as FmtResult};
 
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
+pub const ALL_COMPONENT_TYPES: [DestinyComponentType; 36] = [
+	DestinyComponentType::None,
+	DestinyComponentType::Profiles,
+	DestinyComponentType::VendorReceipts,
+	DestinyComponentType::ProfileInventories,
+	DestinyComponentType::ProfileCurrencies,
+	DestinyComponentType::ProfileProgression,
+	DestinyComponentType::PlatformSilver,
+	DestinyComponentType::Characters,
+	DestinyComponentType::CharacterInventories,
+	DestinyComponentType::CharacterProgressions,
+	DestinyComponentType::CharacterRenderData,
+	DestinyComponentType::CharacterActivities,
+	DestinyComponentType::CharacterEquipment,
+	DestinyComponentType::ItemInstances,
+	DestinyComponentType::ItemObjectives,
+	DestinyComponentType::ItemPerks,
+	DestinyComponentType::ItemRenderData,
+	DestinyComponentType::ItemStats,
+	DestinyComponentType::ItemSockets,
+	DestinyComponentType::ItemTalentGrids,
+	DestinyComponentType::ItemCommonData,
+	DestinyComponentType::ItemPlugStates,
+	DestinyComponentType::ItemPlugObjectives,
+	DestinyComponentType::ItemReusablePlugs,
+	DestinyComponentType::Vendors,
+	DestinyComponentType::VendorCatagories,
+	DestinyComponentType::VendorSales,
+	DestinyComponentType::Kiosks,
+	DestinyComponentType::CurrencyLookups,
+	DestinyComponentType::PresentationNotes,
+	DestinyComponentType::Collectables,
+	DestinyComponentType::Records,
+	DestinyComponentType::Transitory,
+	DestinyComponentType::Metries,
+	DestinyComponentType::StringVariables,
+	DestinyComponentType::Craftables,
+];
+
 #[derive(Debug, Clone, Copy, Serialize_repr, Deserialize_repr)]
 #[repr(i32)]
 pub enum DestinyComponentType {

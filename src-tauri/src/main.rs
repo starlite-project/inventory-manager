@@ -58,6 +58,7 @@ fn main() -> Result<()> {
 			app::fetch::get_bungie_applications,
 			app::fetch::get_current_user,
 			app::fetch::get_linked_profiles,
+			app::fetch::get_profile,
 			app::http::oauth::get_authorization_code,
 			app::http::oauth::refresh_token,
 		])

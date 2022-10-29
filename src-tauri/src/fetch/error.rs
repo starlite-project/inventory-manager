@@ -1,6 +1,7 @@
 use std::{
 	error::Error,
 	fmt::{Display, Formatter, Result as FmtResult, Write},
+	num::ParseIntError,
 };
 
 use serde::Serialize;
@@ -14,6 +15,7 @@ pub enum FetchError {
 	},
 	Reqwest(reqwest::Error),
 	Url(url::ParseError),
+	ParseInt(ParseIntError)
 }
 
 impl Display for FetchError {
@@ -39,6 +41,7 @@ impl Display for FetchError {
 			}
 			Self::Reqwest(e) => Display::fmt(e, f),
 			Self::Url(e) => Display::fmt(e, f),
+			Self::ParseInt(e) => Display::fmt(e, f)
 		}
 	}
 }
@@ -54,6 +57,12 @@ impl From<reqwest::Error> for FetchError {
 impl From<url::ParseError> for FetchError {
 	fn from(e: url::ParseError) -> Self {
 		Self::Url(e)
+	}
+}
+
+impl From<ParseIntError> for FetchError {
+	fn from(e: ParseIntError) -> Self {
+		Self::ParseInt(e)
 	}
 }
 

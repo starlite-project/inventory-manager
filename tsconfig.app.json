@@ -17,6 +17,7 @@
 				"./src/*"
 			]
 		},
-		"isolatedModules": false
+		"isolatedModules": false,
+		"preserveConstEnums": true
 	}
 }

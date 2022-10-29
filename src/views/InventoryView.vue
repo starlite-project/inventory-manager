@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useAccountStore } from '@/stores';
+import { useAccountStore, useCharacterStore } from '@/stores';
 import ErrorDisplay from '../components/ErrorDisplay.vue';
 
-const { data, error } = useAccountStore();
+const { data, error } = useCharacterStore();
 </script>
 
 <template>

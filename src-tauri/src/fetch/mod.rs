@@ -6,7 +6,7 @@ use self::{
 	response::BungieResponse,
 	routing::{AppRoute, Destiny2Route, UserRoute},
 };
-use crate::{http::{token::AuthTokens, LoadoutClient}, model::BungieMembershipType};
+use crate::{http::{token::AuthTokens, LoadoutClient}, model::{BungieMembershipType, DestinyComponentType}};
 
 mod error;
 mod response;
@@ -41,6 +41,20 @@ pub async fn get_current_user(
 	token: AuthTokens,
 ) -> Result<JsonValue, FetchError> {
 	let route = UserRoute::GetBungieNetUserById(token.bungie_membership_id);
+	basic_fetch(&*http, token, route).await
+}
+
+#[tauri::command]
+pub async fn get_profile(
+	http: tauri::State<'_, LoadoutClient>,
+	token: AuthTokens,
+	membership_id: String,
+	membership_type: BungieMembershipType,
+	component_types: Vec<DestinyComponentType>,
+) -> Result<JsonValue, FetchError> {
+	let id = membership_id.parse::<i64>()?;
+
+	let route = Destiny2Route::GetProfile(id, membership_type, component_types);
 	basic_fetch(&*http, token, route).await
 }
 

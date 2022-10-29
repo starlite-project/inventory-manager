@@ -10,7 +10,7 @@ export default defineStore('account', () => {
 	if (!loginStore.isLoggedIn)
 		return { error: ref('Not logged in'), data: reactive([]) };
 
-	const { data: rawData, error } = useModel('get_linked_profiles');
+	const { data: rawData, error } = useModel({ key: 'get_linked_profiles' });
 	const accounts: DestinyAccount[] = reactive([]);
 
 	watch(rawData, (newData): void => {

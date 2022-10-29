@@ -12,7 +12,10 @@ import useSWRV from 'swrv';
 import type { IResponse } from 'swrv/dist/types';
 import LocalStorageCache from 'swrv/dist/cache/adapters/localStorage';
 import type { InvokeArgs } from '@tauri-apps/api/tauri';
-import type { DestinyLinkedProfilesResponse } from 'bungie-api-ts/destiny2';
+import type {
+	DestinyLinkedProfilesResponse,
+	DestinyProfileResponse,
+} from 'bungie-api-ts/destiny2';
 import type { GeneralUser } from 'bungie-api-ts/user';
 import type { Application } from 'bungie-api-ts/app';
 
@@ -20,6 +23,7 @@ interface BaseTypes {
 	get_current_user: GeneralUser;
 	get_bungie_applications: Application[];
 	get_linked_profiles: DestinyLinkedProfilesResponse;
+	get_profile: DestinyProfileResponse;
 }
 
 interface InternalFetch {
@@ -46,14 +50,26 @@ const createInternalFetch =
 		return data;
 	};
 
+export interface UseModelOptions<K extends keyof BaseTypes> {
+	key: K;
+	useFetch?: boolean;
+}
+
 export const useModel = <K extends keyof BaseTypes>(
-	key: K,
+	{ key, useFetch = false }: UseModelOptions<K>,
 	args?: InvokeArgs
-): IResponse<BaseTypes[K]> =>
-	useSWRV<BaseTypes[K]>(key, createInternalFetch(args), {
-		shouldRetryOnError: false,
-		cache: new LocalStorageCache(`im_${key}`),
-	});
+): IResponse<BaseTypes[K]> => {
+	if (!useFetch)
+		return useSWRV(key, null, {
+			shouldRetryOnError: false,
+			cache: new LocalStorageCache(`im_${key}`),
+		});
+	else
+		return useSWRV(key, createInternalFetch(args), {
+			shouldRetryOnError: false,
+			cache: new LocalStorageCache(`im_${key}`),
+		});
+};
 
 export const internalFetch = async <K extends keyof BaseTypes>(
 	key: K,
