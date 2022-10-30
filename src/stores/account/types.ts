@@ -8,7 +8,7 @@ import type { UserInfoCard } from 'bungie-api-ts/user';
 
 const { BungieMembershipType: InternalMembershipType } = Content;
 
-type DestinyVersion = 1 | 2;
+export type DestinyVersion = 1 | 2;
 
 export interface DestinyAccount {
 	readonly displayName: string;
