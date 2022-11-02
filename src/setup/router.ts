@@ -18,8 +18,9 @@ export const initRouter = (app: App): App => {
 			{
 				path: '/login',
 				name: 'login',
-				component: (): Promise<typeof import('../views/LoginView.vue')> =>
-					import('../views/LoginView.vue'),
+				component: (): Promise<
+					typeof import('../views/LoginView.vue')
+				> => import('../views/LoginView.vue'),
 				meta: { requiresAuth: false },
 			},
 			{
@@ -35,10 +36,10 @@ export const initRouter = (app: App): App => {
 		const account = useAccountStore();
 		if (to.meta.requiresAuth && !account.isLoggedIn) {
 			return {
-				path: '/login'
-			}
+				path: '/login',
+			};
 		}
 	});
 
 	return app.use(router);
-}
+};
